@@ -271,6 +271,7 @@ class GRPOTrainer(Trainer):
         peft_config: Optional["PeftConfig"] = None,
     ):
         # Args
+        print("Inside GRPOTrainer")
         if args is None:
             model_name = model if isinstance(model, str) else model.config._name_or_path
             model_name = model_name.split("/")[-1]
