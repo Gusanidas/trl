@@ -906,12 +906,14 @@ class GRPOTrainer(Trainer):
 
         # Apply weights to each reward function's output and sum
         rewards = (rewards_per_func * self.reward_weights.to(device).unsqueeze(0)).nansum(dim=1)
+        print(f"length of rewards: {rewards.shape}")
         self.rewards_queue.append(rewards)
         all_rewards = torch.cat(list(self.rewards_queue), dim=0)
+        print(f"length of all_rewards: {all_rewards.shape}")
 
         # Compute grouped-wise rewards
-        mean_grouped_rewards = all_rewards.view(-1, self.num_generations).mean(dim=1)
-        std_grouped_rewards = all_rewards.view(-1, self.num_generations).std(dim=1)
+        mean_grouped_rewards = all_rewards.view(-1, self.num_generations).mean()
+        std_grouped_rewards = all_rewards.view(-1, self.num_generations).std()
 
         # Normalize the rewards to compute the advantages
         mean_grouped_rewards = mean_grouped_rewards.repeat_interleave(self.num_generations, dim=0)
