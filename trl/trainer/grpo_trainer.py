@@ -270,6 +270,7 @@ class GRPOTrainer(Trainer):
         callbacks: Optional[list[TrainerCallback]] = None,
         optimizers: tuple[Optional[torch.optim.Optimizer], Optional[torch.optim.lr_scheduler.LambdaLR]] = (None, None),
         peft_config: Optional["PeftConfig"] = None,
+        queue_size: int = 10,
     ):
         # Args
         print("Inside GRPOTrainer")
@@ -412,7 +413,7 @@ class GRPOTrainer(Trainer):
 
 
         # A queue with the last 10 rewards
-        self.rewards_queue = deque(maxlen=10)
+        self.rewards_queue = deque(maxlen=queue_size)
         super().__init__(
             model=model,
             args=args,
