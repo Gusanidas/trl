@@ -912,12 +912,13 @@ class GRPOTrainer(Trainer):
         print(f"length of all_rewards: {all_rewards.shape}")
 
         # Compute grouped-wise rewards
-        mean_grouped_rewards = all_rewards.view(-1, self.num_generations).mean()
-        std_grouped_rewards = all_rewards.view(-1, self.num_generations).std()
+        mean_grouped_rewards = all_rewards.mean()
+        std_grouped_rewards = all_rewards.std()
+
 
         # Normalize the rewards to compute the advantages
-        mean_grouped_rewards = mean_grouped_rewards.repeat_interleave(self.num_generations, dim=0)
-        std_grouped_rewards = std_grouped_rewards.repeat_interleave(self.num_generations, dim=0)
+        mean_grouped_rewards = mean_grouped_rewards.expand(rewards.shape)
+        std_grouped_rewards = std_grouped_rewards.expand(rewards.shape)
         advantages = (rewards - mean_grouped_rewards) / (std_grouped_rewards + 1e-4)
 
         # Slice to keep only the local part of the data
